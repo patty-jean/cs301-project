@@ -3,6 +3,11 @@ Patricia Dzwill and Elizabeth Finnegan are working together as Team 4 for the CS
 
 In Milestone 1, we created this Github repo, and connected it to a Colab Notebook. (Installed dependencies using pip commands).
 
+! pip install git+https://github.com/patty-jean/cs301-project.git
+
+
+! git clone https://github.com/patty-jean/cs301-project.git
+
 Subsequently, after installing the necessary files, we installed NNI, following these intructions: https://nni.readthedocs.io/en/stable/sharings/nni_colab_support.html
 
 The screenshot below is our NNI Web UI displayed shortly after opening it. 
