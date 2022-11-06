@@ -404,5 +404,6 @@ for i in range(10):
     plt.imshow(predicted_img)
     output_num = "output" + str(i) + ".png"
     plt.savefig(output_num)
+    plt.clf()
 
 #####################################################################
