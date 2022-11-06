@@ -395,6 +395,6 @@ plt.imshow(ground_truth)
 plt.subplot(233)
 plt.title('Prediction on test image')
 plt.imshow(predicted_img)
-plt.show()
+plt.savefig('output.png')
 
 #####################################################################
