@@ -266,7 +266,7 @@ model.summary()
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=100, 
+                    epochs=5, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -380,9 +380,9 @@ nums=[]
 
 for i in range(10):
     test_img_number = random.randint(0, len(X_test))
-    while test_img_number in nums:
-        test_img_number = random.randint(0, len(X_test))
-    nums.append(test_img_number)
+    #while test_img_number in nums:
+    #    test_img_number = random.randint(0, len(X_test))
+    #nums.append(test_img_number)
     #test_img_number = 10
     test_img = X_test[test_img_number]
     ground_truth=y_test_argmax[test_img_number]
