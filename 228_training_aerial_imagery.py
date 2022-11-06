@@ -375,7 +375,7 @@ print("Mean IoU =", IOU_keras.result().numpy())
 #Predict on a few images
 
 import random
-
+'''
 nums=[]
 
 for i in range(10):
@@ -385,7 +385,7 @@ for i in range(10):
     #nums.append(test_img_number)
     #test_img_number = 10
     test_img = X_test[test_img_number]
-    ground_truth=y_test[test_img_number]
+    ground_truth=y_test_argmax[test_img_number]
     #test_img_norm=test_img[:,:,0][:,:,None]
     test_img_input=np.expand_dims(test_img, 0)
     prediction = (model.predict(test_img_input))
@@ -405,5 +405,26 @@ for i in range(10):
     output_num = "output" + str(i) + ".png"
     plt.savefig(output_num)
     plt.clf()
+  '''  
+test_img_number = random.randint(0, len(X_test))
+test_img = X_test[test_img_number]
+ground_truth=y_test_argmax[test_img_number]
+#test_img_norm=test_img[:,:,0][:,:,None]
+test_img_input=np.expand_dims(test_img, 0)
+prediction = (model.predict(test_img_input))
+predicted_img=np.argmax(prediction, axis=3)[0,:,:]
+
+
+plt.figure(figsize=(12, 8))
+plt.subplot(231)
+plt.title('Testing Image')
+plt.imshow(test_img)
+plt.subplot(232)
+plt.title('Testing Label')
+plt.imshow(ground_truth)
+plt.subplot(233)
+plt.title('Prediction on test image')
+plt.imshow(predicted_img)
+plt.show()
 
 #####################################################################
