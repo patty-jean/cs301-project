@@ -285,7 +285,7 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-model.save('satellite_standard_unet_100epochs.hdf5')
+#model.save('satellite_standard_unet_100epochs.hdf5')
 ############################################################
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
@@ -352,6 +352,7 @@ plt.show()
 
 
 ##################################
+'''
 from keras.models import load_model
 model = load_model("satellite_standard_unet_100epochs.hdf5",
                    custom_objects={'dice_loss_plus_2focal_loss': total_loss,
@@ -369,7 +370,7 @@ n_classes = 6
 IOU_keras = MeanIoU(num_classes=n_classes)  
 IOU_keras.update_state(y_test_argmax, y_pred_argmax)
 print("Mean IoU =", IOU_keras.result().numpy())
-
+'''
 #######################################################################
 #Predict on a few images
 
