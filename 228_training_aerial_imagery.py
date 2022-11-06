@@ -285,7 +285,7 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-model.save('satellite_standard_unet_100epochs_7May2021.hdf5')
+model.save('satellite_standard_unet_100epochs.hdf5')
 ############################################################
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
