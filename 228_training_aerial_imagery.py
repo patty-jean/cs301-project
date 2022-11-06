@@ -30,12 +30,14 @@ Total 1305 patches of size 256x256
 import os
 import cv2
 import numpy as np
+import torch
 
 from matplotlib import pyplot as plt
 from patchify import patchify
 from PIL import Image
 import segmentation_models as sm
 from tensorflow.keras.metrics import MeanIoU
+from torchmetrics.functional import precision_recall
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
@@ -55,6 +57,7 @@ for path, subdirs, files in os.walk(root_directory):
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'images':   #Find all 'images' directories
         images = os.listdir(path)  #List of all image names in this subdirectory
+        images.sort()
         for i, image_name in enumerate(images):  
             if image_name.endswith(".jpg"):   #Only read jpg images...
                
@@ -83,7 +86,6 @@ for path, subdirs, files in os.walk(root_directory):
                         image_dataset.append(single_patch_img)
                 
   
-                
   
  #Now do the same as above for masks
  #For this specific dataset we could have added masks to the above code as masks have extension png
@@ -93,6 +95,7 @@ for path, subdirs, files in os.walk(root_directory):
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'masks':   #Find all 'images' directories
         masks = os.listdir(path)  #List of all image names in this subdirectory
+        masks.sort()
         for i, mask_name in enumerate(masks):  
             if mask_name.endswith(".png"):   #Only read png images... (masks in this dataset)
                
@@ -103,7 +106,7 @@ for path, subdirs, files in os.walk(root_directory):
                 mask = Image.fromarray(mask)
                 mask = mask.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
                 #mask = mask.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
-                mask = np.array(mask)             
+                mask = np.array(mask)
        
                 #Extract patches from each image
                 print("Now patchifying mask:", path+"/"+mask_name)
@@ -117,6 +120,7 @@ for path, subdirs, files in os.walk(root_directory):
                         single_patch_mask = single_patch_mask[0] #Drop the extra unecessary dimension that patchify adds.                               
                         mask_dataset.append(single_patch_mask) 
  
+
 image_dataset = np.array(image_dataset)
 mask_dataset =  np.array(mask_dataset)
 
@@ -285,8 +289,9 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-#model.save('models/satellite_standard_unet_100epochs_7May2021.hdf5')
+#model.save('satellite_standard_unet_100epochs.hdf5')
 ############################################################
+'''
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
 BACKBONE = 'resnet34'
@@ -324,7 +329,7 @@ history2=model_resnet_backbone.fit(X_train_prepr,
 #Standard scaler
 #Using categorical crossentropy as loss: 0.74
 
-
+'''
 ###########################################################
 #plot the training and validation accuracy and loss at each epoch
 history = history1
@@ -337,7 +342,8 @@ plt.title('Training and validation loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.show()
+plt.savefig("LossvEpochs.png")
+
 
 acc = history.history['jacard_coef']
 val_acc = history.history['val_jacard_coef']
@@ -352,11 +358,11 @@ plt.show()
 
 
 ##################################
+'''
 from keras.models import load_model
-model = load_model("models/satellite_standard_unet_100epochs.hdf5",
-                   custom_objects={'dice_loss_plus_2focal_loss': total_loss,
-                                   'jacard_coef':jacard_coef})
-
+model = load_model("satellite_standard_unet_100epochs.hdf5", compile=False)
+                   #, custom_objects={'dice_loss_plus_2focal_loss':total_loss, 'jacard_coef':jacard_coef})
+''' 
 #IOU
 y_pred=model.predict(X_test)
 y_pred_argmax=np.argmax(y_pred, axis=3)
@@ -374,25 +380,49 @@ print("Mean IoU =", IOU_keras.result().numpy())
 #Predict on a few images
 
 import random
-test_img_number = random.randint(0, len(X_test))
-test_img = X_test[test_img_number]
-ground_truth=y_test_argmax[test_img_number]
-#test_img_norm=test_img[:,:,0][:,:,None]
-test_img_input=np.expand_dims(test_img, 0)
-prediction = (model.predict(test_img_input))
-predicted_img=np.argmax(prediction, axis=3)[0,:,:]
+
+nums=[]
+pre = []
+rec = []
+
+for i in range(10):
+    test_img_number = random.randint(0, len(X_test))
+    while test_img_number in nums:
+        test_img_number = random.randint(0, len(X_test))
+    nums.append(test_img_number)
+    test_img = X_test[test_img_number]
+    ground_truth=y_test_argmax[test_img_number]
+    #test_img_norm=test_img[:,:,0][:,:,None]
+    test_img_input=np.expand_dims(test_img, 0)
+    prediction = (model.predict(test_img_input))
+    predicted_img=np.argmax(prediction, axis=3)[0,:,:]
 
 
-plt.figure(figsize=(12, 8))
-plt.subplot(231)
-plt.title('Testing Image')
-plt.imshow(test_img)
-plt.subplot(232)
-plt.title('Testing Label')
-plt.imshow(ground_truth)
-plt.subplot(233)
-plt.title('Prediction on test image')
-plt.imshow(predicted_img)
-plt.show()
+    plist = torch.from_numpy(predicted_img)
+    glist = torch.from_numpy(ground_truth)
 
-#####################################################################
+    pre.append(precision_recall(plist, glist, mdmc_average='global')[0])
+    rec.append(precision_recall(plist, glist, mdmc_average='global')[1])
+
+
+    plt.figure(figsize=(12, 8))
+    plt.subplot(231)
+    plt.title('Testing Image')
+    plt.imshow(test_img)
+    plt.subplot(232)
+    plt.title('Testing Label')
+    plt.imshow(ground_truth)
+    plt.subplot(233)
+    plt.title('Prediction on test image')
+    plt.imshow(predicted_img)
+    output_num = "output" + str(i) + ".png"
+    plt.savefig(output_num)
+    plt.clf()
+
+plt.plot(rec, pre)
+plt.title('Precision vs Recall of 10 Tests')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.savefig("PrecisionvsRecall.png")
+plt.clf()
+###################################################################
