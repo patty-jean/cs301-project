@@ -285,8 +285,9 @@ history1 = model.fit(X_train, y_train,
 ##Standardscaler 
 #Using categorical crossentropy as loss: 0.677
 
-model.save('satellite_standard_unet_100epochs.hdf5')
+#model.save('satellite_standard_unet_100epochs.hdf5')
 ############################################################
+'''
 #TRY ANOTHE MODEL - WITH PRETRINED WEIGHTS
 #Resnet backbone
 BACKBONE = 'resnet34'
@@ -324,7 +325,7 @@ history2=model_resnet_backbone.fit(X_train_prepr,
 #Standard scaler
 #Using categorical crossentropy as loss: 0.74
 
-
+'''
 ###########################################################
 #plot the training and validation accuracy and loss at each epoch
 history = history1
@@ -352,10 +353,11 @@ plt.show()
 
 
 ##################################
-
+'''
 from keras.models import load_model
-model = load_model("satellite_standard_unet_100epochs.hdf5", custom_objects={'dice_loss_plus_2focal_loss': total_loss, 'jacard_coef':jacard_coef})
-
+model = load_model("satellite_standard_unet_100epochs.hdf5", compile=False)
+                   #, custom_objects={'dice_loss_plus_2focal_loss':total_loss, 'jacard_coef':jacard_coef})
+''' 
 #IOU
 y_pred=model.predict(X_test)
 y_pred_argmax=np.argmax(y_pred, axis=3)
