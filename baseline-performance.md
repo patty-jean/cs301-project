@@ -12,4 +12,6 @@ Next up in preparing for segmentation is converting masks’ HEX codes from HEX 
 
 Finally, the dataset and labels are split into training and testing data. Now, the model is set up. The baseline segmentation hasn’t yet delved into different class weights leaving the model to be expanded. 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Team 4’s results for baseline segmentation were fairly decent. 
