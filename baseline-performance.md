@@ -15,3 +15,16 @@ Finally, the dataset and labels are split into training and testing data. Now, t
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Team 4’s results for baseline segmentation were fairly decent. 
+
+
+
+![output0](https://user-images.githubusercontent.com/84546784/200200747-500fa10b-1c18-42e7-bc9c-2da546c6830a.png)
+![output1](https://user-images.githubusercontent.com/84546784/200200751-d0de78de-01f7-4728-8522-71e67123ff59.png)
+![output2](https://user-images.githubusercontent.com/84546784/200200754-5df90303-d85f-418a-8d18-f50a9709642e.png)
+![output3](https://user-images.githubusercontent.com/84546784/200200757-cdca4479-3f00-4991-9b14-ee0b71a7804c.png)
+![output4](https://user-images.githubusercontent.com/84546784/200200761-9cfd406f-e056-48d7-a0b7-517bf0903875.png)
+![output5](https://user-images.githubusercontent.com/84546784/200200764-037bb562-4ca6-4062-b248-ebb6b082cfb2.png)
+![output6](https://user-images.githubusercontent.com/84546784/200200816-275432d9-a2c0-4f85-91b2-35d65471dea8.png)
+![output7](https://user-images.githubusercontent.com/84546784/200200819-29375721-a7f1-4cc4-8a26-d3e1fb4a9909.png)
+![output8](https://user-images.githubusercontent.com/84546784/200200822-8be2c3af-14f8-4c1d-b319-5ce9ab19dfb4.png)
+![output9](https://user-images.githubusercontent.com/84546784/200200824-9a9dd0ad-2f67-46ec-863e-7116f723a832.png)
