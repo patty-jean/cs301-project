@@ -385,7 +385,7 @@ for i in range(10):
     #nums.append(test_img_number)
     #test_img_number = 10
     test_img = X_test[test_img_number]
-    ground_truth=y_test_argmax[test_img_number]
+    ground_truth=y_test[test_img_number]
     #test_img_norm=test_img[:,:,0][:,:,None]
     test_img_input=np.expand_dims(test_img, 0)
     prediction = (model.predict(test_img_input))
