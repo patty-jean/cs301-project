@@ -402,7 +402,7 @@ for i in range(10):
     plt.subplot(233)
     plt.title('Prediction on test image')
     plt.imshow(predicted_img)
-    output_num = "output" + str(i)
-    plt.savefig('output.png')
+    output_num = "output" + str(i) + ".png"
+    plt.savefig(output_num)
 
 #####################################################################
