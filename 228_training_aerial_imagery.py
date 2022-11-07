@@ -1,18 +1,14 @@
 # https://youtu.be/jvZm8REF2KY
 """
 Explanation of using RGB masks: https://youtu.be/sGAwx4GMe4E
-
 https://www.kaggle.com/humansintheloop/semantic-segmentation-of-aerial-imagery
-
 The dataset consists of aerial imagery of Dubai obtained by MBRSC satellites and annotated with pixel-wise semantic segmentation in 6 classes. The total volume of the dataset is 72 images grouped into 6 larger tiles. The classes are:
-
 Building: #3C1098
 Land (unpaved area): #8429F6
 Road: #6EC1E4
 Vegetation: #FEDD3A
 Water: #E2A929
 Unlabeled: #9B9B9B
-
 Use patchify....
 Tile 1: 797 x 644 --> 768 x 512 --> 6
 Tile 2: 509 x 544 --> 512 x 256 --> 2
@@ -24,18 +20,23 @@ Tile 7: 1817 x 2061 --> 1792 x 2048 --> 56
 Tile 8: 2149 x 1479 --> 1280 x 2048 --> 40
 Total 9 images in each folder * (145 patches) = 1305
 Total 1305 patches of size 256x256
-
 """
 
 import os
 import cv2
 import numpy as np
+from numpy.linalg import norm
+import torch
 
 from matplotlib import pyplot as plt
 from patchify import patchify
 from PIL import Image
 import segmentation_models as sm
 from tensorflow.keras.metrics import MeanIoU
+from tensorflow.keras.metrics import Recall
+from tensorflow.keras.metrics import Precision
+from torchmetrics.functional import precision_recall
+from torchmetrics import PrecisionRecallCurve
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
@@ -55,6 +56,7 @@ for path, subdirs, files in os.walk(root_directory):
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'images':   #Find all 'images' directories
         images = os.listdir(path)  #List of all image names in this subdirectory
+        images.sort()
         for i, image_name in enumerate(images):  
             if image_name.endswith(".jpg"):   #Only read jpg images...
                
@@ -83,7 +85,6 @@ for path, subdirs, files in os.walk(root_directory):
                         image_dataset.append(single_patch_img)
                 
   
-                
   
  #Now do the same as above for masks
  #For this specific dataset we could have added masks to the above code as masks have extension png
@@ -93,6 +94,7 @@ for path, subdirs, files in os.walk(root_directory):
     dirname = path.split(os.path.sep)[-1]
     if dirname == 'masks':   #Find all 'images' directories
         masks = os.listdir(path)  #List of all image names in this subdirectory
+        masks.sort()
         for i, mask_name in enumerate(masks):  
             if mask_name.endswith(".png"):   #Only read png images... (masks in this dataset)
                
@@ -103,7 +105,7 @@ for path, subdirs, files in os.walk(root_directory):
                 mask = Image.fromarray(mask)
                 mask = mask.crop((0 ,0, SIZE_X, SIZE_Y))  #Crop from top left corner
                 #mask = mask.resize((SIZE_X, SIZE_Y))  #Try not to resize for semantic segmentation
-                mask = np.array(mask)             
+                mask = np.array(mask)
        
                 #Extract patches from each image
                 print("Now patchifying mask:", path+"/"+mask_name)
@@ -117,6 +119,7 @@ for path, subdirs, files in os.walk(root_directory):
                         single_patch_mask = single_patch_mask[0] #Drop the extra unecessary dimension that patchify adds.                               
                         mask_dataset.append(single_patch_mask) 
  
+
 image_dataset = np.array(image_dataset)
 mask_dataset =  np.array(mask_dataset)
 
@@ -140,16 +143,12 @@ the first hexadecimal digit (between 0 and F, where the letters A to F represent
 the numbers 10 to 15). The remainder gives the second hexadecimal digit. 
 0-9 --> 0-9
 10-15 --> A-F
-
 Example: RGB --> R=201, G=, B=
-
 R = 201/16 = 12 with remainder of 9. So hex code for R is C9 (remember C=12)
-
 Calculating RGB from HEX: #3C1098
 3C = 3*16 + 12 = 60
 10 = 1*16 + 0 = 16
 98 = 9*16 + 8 = 152
-
 """
 #Convert HEX to RGB array
 # Try the following to understand how python handles hex values...
@@ -266,7 +265,7 @@ model.summary()
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=5, 
+                    epochs=20, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -292,28 +291,21 @@ history1 = model.fit(X_train, y_train,
 #Resnet backbone
 BACKBONE = 'resnet34'
 preprocess_input = sm.get_preprocessing(BACKBONE)
-
 # preprocess input
 X_train_prepr = preprocess_input(X_train)
 X_test_prepr = preprocess_input(X_test)
-
 # define model
 model_resnet_backbone = sm.Unet(BACKBONE, encoder_weights='imagenet', classes=n_classes, activation='softmax')
-
 # compile keras model with defined optimozer, loss and metrics
 #model_resnet_backbone.compile(optimizer='adam', loss=focal_loss, metrics=metrics)
 model_resnet_backbone.compile(optimizer='adam', loss='categorical_crossentropy', metrics=metrics)
-
 print(model_resnet_backbone.summary())
-
-
 history2=model_resnet_backbone.fit(X_train_prepr, 
           y_train,
           batch_size=16, 
           epochs=5,
           verbose=1,
           validation_data=(X_test_prepr, y_test))
-
 #Minmaxscaler
 #With weights...[0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]   in Dice loss
 #With focal loss only, after 100 epochs val jacard is:               
@@ -324,7 +316,6 @@ history2=model_resnet_backbone.fit(X_train_prepr,
  
 #Standard scaler
 #Using categorical crossentropy as loss: 0.74
-
 '''
 ###########################################################
 #plot the training and validation accuracy and loss at each epoch
@@ -338,7 +329,8 @@ plt.title('Training and validation loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.show()
+plt.savefig("LossvEpochs.png")
+
 
 acc = history.history['jacard_coef']
 val_acc = history.history['val_jacard_coef']
@@ -375,15 +367,19 @@ print("Mean IoU =", IOU_keras.result().numpy())
 #Predict on a few images
 
 import random
-'''
+
 nums=[]
+pre = []
+rec = []
+
+predi = []
+truths = []
 
 for i in range(10):
     test_img_number = random.randint(0, len(X_test))
-    #while test_img_number in nums:
-    #    test_img_number = random.randint(0, len(X_test))
-    #nums.append(test_img_number)
-    #test_img_number = 10
+    while test_img_number in nums:
+        test_img_number = random.randint(0, len(X_test))
+    nums.append(test_img_number)
     test_img = X_test[test_img_number]
     ground_truth=y_test_argmax[test_img_number]
     #test_img_norm=test_img[:,:,0][:,:,None]
@@ -391,6 +387,10 @@ for i in range(10):
     prediction = (model.predict(test_img_input))
     predicted_img=np.argmax(prediction, axis=3)[0,:,:]
 
+    plist = torch.from_numpy(predicted_img)
+    predi.append(plist)
+    glist = torch.from_numpy(ground_truth)
+    truths.append(glist)
 
     plt.figure(figsize=(12, 8))
     plt.subplot(231)
@@ -405,26 +405,38 @@ for i in range(10):
     output_num = "output" + str(i) + ".png"
     plt.savefig(output_num)
     plt.clf()
-  '''  
-test_img_number = random.randint(0, len(X_test))
-test_img = X_test[test_img_number]
-ground_truth=y_test_argmax[test_img_number]
-#test_img_norm=test_img[:,:,0][:,:,None]
-test_img_input=np.expand_dims(test_img, 0)
-prediction = (model.predict(test_img_input))
-predicted_img=np.argmax(prediction, axis=3)[0,:,:]
+
+#th = []
+#for i in range(11):
+#  th.append(i/10.0)
+
+#pr_curve = PrecisionRecallCurve(pos_label=1)
+#precision, recall, thresholds = pr_curve(plist, glist)
+
+recall = []
+precision = []
+normTest = np.array(y_test_argmax)/np.amax(y_test_argmax)
+normPred = np.array(y_pred_argmax)/np.amax(y_pred_argmax)
+for i in range(1,11):
+  th = i/10.0
+  rec = Recall(thresholds=th)
+  rec.update_state(normTest, normPred)
+  pre = Precision(thresholds=th)
+  pre.update_state(normTest, normPred)
+
+  recall.append(rec.result().numpy())
+  precision.append(pre.result().numpy())
+  
+  rec.reset_state()
+  pre.reset_state()
 
 
-plt.figure(figsize=(12, 8))
-plt.subplot(231)
-plt.title('Testing Image')
-plt.imshow(test_img)
-plt.subplot(232)
-plt.title('Testing Label')
-plt.imshow(ground_truth)
-plt.subplot(233)
-plt.title('Prediction on test image')
-plt.imshow(predicted_img)
-plt.savefig("output.png")
+plt.plot(recall, precision)
+plt.title('Precision vs Recall of 10 Tests')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.savefig("PrecisionvsRecall.png")
+plt.clf()
+
 
 #####################################################################
