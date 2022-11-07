@@ -14,8 +14,7 @@ Finally, the dataset and labels are split into training and testing data. Now, t
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Team 4’s results for baseline segmentation were fairly decent. 
-
+Team 4’s results for baseline segmentation were fairly decent. Just by looking at the images, the testing value, and then the predicted image, the baseline segmentation does a fairly alright job of identifying key classes within the picture. In certain images, it seems to be even better than the test value at identifying the roads in pictures. Below are the 10 segmented images from the validation set, the masks, and our predictions. 
 
 
 ![output0](https://user-images.githubusercontent.com/84546784/200200747-500fa10b-1c18-42e7-bc9c-2da546c6830a.png)
@@ -28,3 +27,9 @@ Team 4’s results for baseline segmentation were fairly decent.
 ![output7](https://user-images.githubusercontent.com/84546784/200200819-29375721-a7f1-4cc4-8a26-d3e1fb4a9909.png)
 ![output8](https://user-images.githubusercontent.com/84546784/200200822-8be2c3af-14f8-4c1d-b319-5ce9ab19dfb4.png)
 ![output9](https://user-images.githubusercontent.com/84546784/200200824-9a9dd0ad-2f67-46ec-863e-7116f723a832.png)
+
+Our training and validation loss vs. epochs graph is displayed below. The two losses follow pretty much the same path. As epochs increase, the losses decrease. Thus it is expected that the model does a better job as the epochs increase. As our model is trained for longer, it gets better at predicting, as it should do. 
+
+
+
+The precision-recall values caused the most trouble for Team 4, but Patricia and Elizabeth perserved through learning how to appropriately obtain the values and plot them. Below is the result of Team 4's hard work. As expected, with precision decreasing, recall increases. Again, the recall-precision curve enforces the idea that baseline segmentation does a fairly decent job but still has room for improvement. Team 4 can hardly wait to improve it in Milestone 3. 
