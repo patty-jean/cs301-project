@@ -14,7 +14,7 @@ Finally, the dataset and labels are split into training and testing data. Now, t
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Team 4’s results for baseline segmentation were fairly decent. Just by looking at the images, the testing value, and then the predicted image, the baseline segmentation does a fairly alright job of identifying key classes within the picture. In certain images, it seems to be even better than the test value at identifying the roads in pictures. Below are the 10 segmented images from the validation set, the masks, and our predictions. 
+Team 4’s results for baseline segmentation were fairly decent. Just by looking at the test image, the testing value, and then the predicted image, the baseline segmentation does a fair job of identifying key classes within the picture. In certain images, it seems to be even better than the test label at identifying the roads in pictures. Below are the 10 segmented images from the validation set, the masks, and our predictions. 
 
 
 ![output0](https://user-images.githubusercontent.com/84546784/200200747-500fa10b-1c18-42e7-bc9c-2da546c6830a.png)
