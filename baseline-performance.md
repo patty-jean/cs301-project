@@ -16,20 +16,24 @@ Finally, the dataset and labels are split into training and testing data. Now, t
 
 Team 4’s results for baseline segmentation were fairly decent. Just by looking at the test image, the testing value, and then the predicted image, the baseline segmentation does a fair job of identifying key classes within the picture. In certain images, it seems to be even better than the test label at identifying the roads in pictures. Below are the 10 segmented images from the validation set, the masks, and our predictions. 
 
-
-![output0](https://user-images.githubusercontent.com/84546784/200200747-500fa10b-1c18-42e7-bc9c-2da546c6830a.png)
-![output1](https://user-images.githubusercontent.com/84546784/200200751-d0de78de-01f7-4728-8522-71e67123ff59.png)
-![output2](https://user-images.githubusercontent.com/84546784/200200754-5df90303-d85f-418a-8d18-f50a9709642e.png)
-![output3](https://user-images.githubusercontent.com/84546784/200200757-cdca4479-3f00-4991-9b14-ee0b71a7804c.png)
-![output4](https://user-images.githubusercontent.com/84546784/200200761-9cfd406f-e056-48d7-a0b7-517bf0903875.png)
-![output5](https://user-images.githubusercontent.com/84546784/200200764-037bb562-4ca6-4062-b248-ebb6b082cfb2.png)
-![output6](https://user-images.githubusercontent.com/84546784/200200816-275432d9-a2c0-4f85-91b2-35d65471dea8.png)
-![output7](https://user-images.githubusercontent.com/84546784/200200819-29375721-a7f1-4cc4-8a26-d3e1fb4a9909.png)
-![output8](https://user-images.githubusercontent.com/84546784/200200822-8be2c3af-14f8-4c1d-b319-5ce9ab19dfb4.png)
-![output9](https://user-images.githubusercontent.com/84546784/200200824-9a9dd0ad-2f67-46ec-863e-7116f723a832.png)
+![output0](https://user-images.githubusercontent.com/84546784/200224214-3a08b915-1bf8-47bc-bbc0-3109146f0215.png)
+![output1](https://user-images.githubusercontent.com/84546784/200224233-9ba22ffa-e4a1-4235-b359-3db290d4a603.png)
+![output2](https://user-images.githubusercontent.com/84546784/200224238-603d1610-2d74-4ff4-8b34-8c00c94f1b25.png)
+![output3](https://user-images.githubusercontent.com/84546784/200224244-ce378088-95ee-4c3b-bc10-671b8b5135e6.png)
+![output4](https://user-images.githubusercontent.com/84546784/200224250-6be2e368-e758-4950-bcbc-a1b7d9ba15d6.png)
+![output5](https://user-images.githubusercontent.com/84546784/200224256-b559317d-9c10-48dd-a79a-70066a8ff0ca.png)
+![output6](https://user-images.githubusercontent.com/84546784/200224261-d5a9bd8e-85d5-47a7-a04e-45df88f4c85e.png)
+![output7](https://user-images.githubusercontent.com/84546784/200224269-9ed0cda2-3dd7-4347-9b79-820a2681f926.png)
+![output8](https://user-images.githubusercontent.com/84546784/200224277-0aa24794-2f81-46ed-b094-2d6f19624acd.png)
+![output9](https://user-images.githubusercontent.com/84546784/200224286-5e852828-bf71-4627-b335-6bd05718ee8a.png)
 
 Our training and validation loss vs. epochs graph is displayed below. The two losses follow pretty much the same path. As epochs increase, the losses decrease. Thus it is expected that the model does a better job as the epochs increase. As our model is trained for longer, it gets better at predicting, as it should do. 
+
+![LossvEpochs](https://user-images.githubusercontent.com/84546784/200224300-e32481a6-bfc5-4390-a188-3a6f569245a5.png)
 
 
 
 The precision-recall values caused the most trouble for Team 4, but Patricia and Elizabeth perserved through learning how to appropriately obtain the values and plot them. Below is the result of Team 4's hard work. As expected, with precision decreasing, recall increases. Again, the recall-precision curve enforces the idea that baseline segmentation does a fairly decent job but still has room for improvement. Team 4 can hardly wait to improve it in Milestone 3. 
+
+![PrecisionvsRecall](https://user-images.githubusercontent.com/84546784/200224316-0f674fd9-0e07-4471-99c0-27d0be8fc59c.png)
+
