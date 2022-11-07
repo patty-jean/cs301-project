@@ -38,6 +38,7 @@ from PIL import Image
 import segmentation_models as sm
 from tensorflow.keras.metrics import MeanIoU
 from torchmetrics.functional import precision_recall
+from torchmetrics import PrecisionRecallCurve
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
@@ -385,6 +386,9 @@ nums=[]
 pre = []
 rec = []
 
+predi = []
+truths = []
+
 for i in range(10):
     test_img_number = random.randint(0, len(X_test))
     while test_img_number in nums:
@@ -397,13 +401,10 @@ for i in range(10):
     prediction = (model.predict(test_img_input))
     predicted_img=np.argmax(prediction, axis=3)[0,:,:]
 
-
     plist = torch.from_numpy(predicted_img)
+    predi.append(plist)
     glist = torch.from_numpy(ground_truth)
-
-    pre.append(precision_recall(plist, glist, mdmc_average='global')[0])
-    rec.append(precision_recall(plist, glist, mdmc_average='global')[1])
-
+    truths.append(glist)
 
     plt.figure(figsize=(12, 8))
     plt.subplot(231)
@@ -419,10 +420,18 @@ for i in range(10):
     plt.savefig(output_num)
     plt.clf()
 
-plt.plot(rec, pre)
+
+
+pr_curve = PrecisionRecallCurve(pos_label=1)
+precision, recall, thresholds = pr_curve(torch.Tensor(predi), torch.Tensor(truths))
+
+
+plt.plot(recall, precision)
 plt.title('Precision vs Recall of 10 Tests')
 plt.xlabel('Recall')
 plt.ylabel('Precision')
 plt.savefig("PrecisionvsRecall.png")
 plt.clf()
-###################################################################
+
+
+#####################################################################
