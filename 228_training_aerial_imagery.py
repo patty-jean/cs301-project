@@ -265,7 +265,7 @@ model.summary()
 history1 = model.fit(X_train, y_train, 
                     batch_size = 16, 
                     verbose=1, 
-                    epochs=20, 
+                    epochs=100, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
 
@@ -413,8 +413,8 @@ for i in range(10):
 #pr_curve = PrecisionRecallCurve(pos_label=1)
 #precision, recall, thresholds = pr_curve(plist, glist)
 
-recall = []
-precision = []
+recall = [1]
+precision = [1]
 normTest = np.array(y_test_argmax)/np.amax(y_test_argmax)
 normPred = np.array(y_pred_argmax)/np.amax(y_pred_argmax)
 for i in range(1,11):
@@ -430,8 +430,9 @@ for i in range(1,11):
   rec.reset_state()
   pre.reset_state()
 
-
-plt.plot(recall, precision)
+recall.append(0)
+precision.append(0)
+plt.plot(np.flip(np.array(recall)), precision)
 plt.title('Precision vs Recall of 10 Tests')
 plt.xlabel('Recall')
 plt.ylabel('Precision')
