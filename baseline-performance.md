@@ -1,5 +1,7 @@
 Milestone 2.
 
+Colab  Notebook: https://colab.research.google.com/drive/1QyNVfe3BjnHIVv0peq0UoDFf8_ob-HAh?usp=sharing
+
 The work continues on Semantic Segmentation of Satellite Imagery as Team 4 performed baseline segmentation. 
 
 Team 4 made the executive decision to upgrade to Colab Pro on both of their accounts to increase the amount of RAM for their runtime of segmentation. Without Colab Pro, epoch size would have had to be limited to 5, which Team 4 thought was too significant of a decrease. Team 4 kept 100 epochs from the original code, as this number seemed large enough to do an appropriate baseline.  
