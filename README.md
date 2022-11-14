@@ -1,6 +1,8 @@
 # cs301-project
 Patricia Dzwill and Elizabeth Finnegan are working together as Team 4 for the CS 301-101 Semantic Segmentation of Satellite Imagery project.
 
+Colab Notebook: https://colab.research.google.com/drive/1QyNVfe3BjnHIVv0peq0UoDFf8_ob-HAh?usp=sharing
+
 In Milestone 1, we created this Github repo, and connected it to a Colab Notebook. (Installed dependencies using pip commands).
 
 ! pip install git+https://github.com/patty-jean/cs301-project.git
