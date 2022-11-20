@@ -1,0 +1,1 @@
+In Milestone 3, Team 4 (Patricia Dzwill and Elizabeth Finnegan) were assigned to improved baseline performance with the hyperparameterization method SMAC. SMAC stands for Sequential Model-Based Algorithm Configuration.
