@@ -8,3 +8,17 @@ Milestone 3 proved to be the most challenging milestone yet, in Team 4’s humbl
 
 
 Our results were the following ten images from the validation set, a graph showing the improved training and validation loss vs. epochs, and a graph with the precision-recall curve. Comparing results to our milestone 2 results (which can be seen in baseline-performance.MD), Team 4 finds that our optimization method has improved our model. All of our results support this statement, as the losses are lower and the precision is higher. As such, Team 4 celebrates the end of Milestone 3 as a success for all “Introduction to Data Science” students. 
+
+![output0(1)](https://user-images.githubusercontent.com/117039859/202954236-d4e7cbf1-8f34-4110-acf0-d0d9b95b234f.png)
+![output1(1)](https://user-images.githubusercontent.com/117039859/202954241-a19bd258-dbd4-410c-a4bc-0c0d1fb556e5.png)
+![output2(1)](https://user-images.githubusercontent.com/117039859/202954249-4603af30-21d2-4f76-892d-05ee10d3c0ab.png)
+![output3(1)](https://user-images.githubusercontent.com/117039859/202954259-21b9e96c-96f2-49e4-ba35-02b241fd09da.png)
+![output4(1)](https://user-images.githubusercontent.com/117039859/202954267-b35f8331-917c-4fcf-a490-2269d756d153.png)
+![output5(1)](https://user-images.githubusercontent.com/117039859/202954274-d4af9615-c12b-43df-9a5b-0cf9b4cdc442.png)
+![output6(1)](https://user-images.githubusercontent.com/117039859/202954286-34df6029-5a14-40dd-812b-77591c0782c5.png)
+![output7(1)](https://user-images.githubusercontent.com/117039859/202954292-dbab1ea4-e832-45f1-8e42-cf7d1bdeda3f.png)
+![output8(1)](https://user-images.githubusercontent.com/117039859/202954298-80134b9b-3bbc-4b7d-a84a-7c66c69e42df.png)
+![output9(1)](https://user-images.githubusercontent.com/117039859/202954300-93a28601-37ad-4200-a163-1b0bed4be92b.png)
+![LossvEpochs(1)](https://user-images.githubusercontent.com/117039859/202954307-fac2ec6b-a624-4133-b74c-057921e860fb.png)
+![PrecisionvsRecall(1)](https://user-images.githubusercontent.com/117039859/202954311-c25b7fd0-45ec-4118-8b4b-1fc7670a91e8.png)
+
