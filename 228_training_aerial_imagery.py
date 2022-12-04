@@ -27,6 +27,7 @@ import cv2
 import numpy as np
 from numpy.linalg import norm
 import torch
+import smac
 
 from matplotlib import pyplot as plt
 from patchify import patchify
@@ -35,8 +36,16 @@ import segmentation_models as sm
 from tensorflow.keras.metrics import MeanIoU
 from tensorflow.keras.metrics import Recall
 from tensorflow.keras.metrics import Precision
+from tensorflow.keras.metrics import Accuracy
 from torchmetrics.functional import precision_recall
 from torchmetrics import PrecisionRecallCurve
+
+
+from sklearn.ensemble import RandomForestClassifier
+from ConfigSpace import ConfigurationSpace
+from ConfigSpace.hyperparameters import UniformIntegerHyperparameter
+from smac.facade.smac_hpo_facade import SMAC4HPO
+from smac.scenario.scenario import Scenario
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
@@ -240,6 +249,19 @@ X_train, X_test, y_train, y_test = train_test_split(image_dataset, labels_cat, t
 # print(weights)
 
 weights = [0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]
+
+######################################
+# Use a random forest for HPO
+######################################
+# X_val = X_test
+# Y_val = y_test
+# X_train =X_train.reshape(X_train.shape[0],X_train.shape[1]*X_train.shape[2]*X_train.shape[3])
+# y_train =y_train.reshape(y_train.shape[0],y_train.shape[1]*y_train.shape[2]*y_train.shape[3])
+
+
+
+#weights = best_found_config
+
 dice_loss = sm.losses.DiceLoss(class_weights=weights) 
 focal_loss = sm.losses.CategoricalFocalLoss()
 total_loss = dice_loss + (1 * focal_loss)  #
@@ -262,12 +284,47 @@ model.compile(optimizer='adam', loss=total_loss, metrics=metrics)
 model.summary()
 
 
-history1 = model.fit(X_train, y_train, 
+######################################
+
+
+history0 = model.fit(X_train, y_train, 
                     batch_size = 16, 
+                    verbose=1, 
+                    epochs=3, 
+                    validation_data=(X_test, y_test), 
+                    shuffle=False)
+
+def trainer(config):
+    model.fit(X_train, y_train)
+
+    m = Accuracy()
+    m.update_state(y_test,model.predict(X_test))
+    # Define the evaluation metric as return
+    return 1 - m.result().numpy()
+
+cs = ConfigurationSpace()
+cs.add_hyperparameter(UniformIntegerHyperparameter("batch", 1, 24, default_value=16))
+
+print("Starting the scenario")
+# Provide meta data for the optimization
+scenario = Scenario({
+    "run_obj": "quality",  # Optimize quality (alternatively runtime)
+    "wallclock-limit": 35,  # Limits time to 35 seconds, because it crashed at higher times
+    "cs": cs
+})
+
+print("Starting SMAC")
+smac = SMAC4HPO(scenario=scenario, tae_runner=trainer)
+best_found_config = smac.optimize()
+print("Best config", best_found_config['batch'])
+
+history1 = model.fit(X_train, y_train, 
+                    batch_size = best_found_config['batch'], 
                     verbose=1, 
                     epochs=100, 
                     validation_data=(X_test, y_test), 
                     shuffle=False)
+
 
 #Minmaxscaler
 #With weights...[0.1666, 0.1666, 0.1666, 0.1666, 0.1666, 0.1666]   in Dice loss
