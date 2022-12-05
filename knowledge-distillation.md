@@ -21,8 +21,7 @@ The following ten images are from the implementation of the compressed model.
 ![output8(1)](https://user-images.githubusercontent.com/117039859/205525074-b6217dc2-5f4c-4664-8b09-71244bf5f0bc.png)
 
 The compressed model’s training and validation loss vs epochs. 
-![LossvEpochs(1)](https://user-images.githubusercontent.com/117039859/205525006-876a6687-7f2c-4e40-9d9e-![Uploading output9(1).png…]()
-2eccf1d61d10.png)
+![LossvEpochs(1)](https://user-images.githubusercontent.com/117039859/205525176-5e8fbf7a-392a-4652-8755-7e1c50665d49.png)
 
 The compressed model’s precision and recall curve.
 ![PrecisionvsRecall(1)](https://user-images.githubusercontent.com/117039859/205524997-01ad022b-cfb0-4fdf-b03a-2bf55eb528db.png)
