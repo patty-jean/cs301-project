@@ -26,7 +26,6 @@ import os
 import cv2
 import numpy as np
 from numpy.linalg import norm
-import torch
 import smac
 
 from matplotlib import pyplot as plt
@@ -37,8 +36,6 @@ from tensorflow.keras.metrics import MeanIoU
 from tensorflow.keras.metrics import Recall
 from tensorflow.keras.metrics import Precision
 from tensorflow.keras.metrics import Accuracy
-from torchmetrics.functional import precision_recall
-from torchmetrics import PrecisionRecallCurve
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -49,6 +46,12 @@ from smac.scenario.scenario import Scenario
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 scaler = MinMaxScaler()
+
+# Milestone 4:
+import tensorflow_model_optimization as tfmot
+
+prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
+
 
 root_directory = 'Semantic segmentation dataset/'
 
@@ -321,8 +324,67 @@ print("Best config", best_found_config['batch'])
 history1 = model.fit(X_train, y_train, 
                     batch_size = best_found_config['batch'], 
                     verbose=1, 
-                    epochs=100, 
+                    epochs=50, 
                     validation_data=(X_test, y_test), 
+                    shuffle=False)
+
+
+'''
+Model compression with level pruning
+
+wrap = LayerWrapper(model)
+config_list = [{ 'sparsity': 0.5, 'op_types': ['default'] }]
+
+compressor = Compressor(model, config_list, wrap)
+pruner = Pruner(compressor)
+
+pruned = pruner.compress()
+
+history2 = pruned.fit(X_train, y_train, 
+                    batch_size = best_found_config['batch'], 
+                    verbose=1, 
+                    epochs=10, 
+                    validation_data=(X_test, y_test), 
+                    shuffle=False)
+'''
+
+# Define model for pruning.
+epochs=50
+
+num_images = X_train.shape[0]
+end_step = np.ceil(num_images / best_found_config['batch']).astype(np.int32) * epochs
+
+pruning_params = {
+      'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.50,
+                                                               final_sparsity=0.80,
+                                                               begin_step=0,
+                                                               end_step=end_step)
+}
+
+model_for_pruning = prune_low_magnitude(model, **pruning_params)
+
+
+# `prune_low_magnitude` requires a recompile.
+model_for_pruning.compile(optimizer='adam',
+              loss=total_loss,
+              metrics=metrics)
+
+#model_for_pruning.summary()
+
+import tempfile
+logdir = tempfile.mkdtemp()
+
+callbacks = [
+  tfmot.sparsity.keras.UpdatePruningStep(),
+  tfmot.sparsity.keras.PruningSummaries(log_dir=logdir),
+]
+
+history2 = model_for_pruning.fit(X_train, y_train, 
+                    batch_size = best_found_config['batch'], 
+                    verbose=1, 
+                    epochs=epochs, 
+                    validation_data=(X_test, y_test),
+                    callbacks=callbacks, 
                     shuffle=False)
 
 
@@ -376,7 +438,7 @@ history2=model_resnet_backbone.fit(X_train_prepr,
 '''
 ###########################################################
 #plot the training and validation accuracy and loss at each epoch
-history = history1
+history = history2
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 epochs = range(1, len(loss) + 1)
@@ -429,9 +491,6 @@ nums=[]
 pre = []
 rec = []
 
-predi = []
-truths = []
-
 for i in range(10):
     test_img_number = random.randint(0, len(X_test))
     while test_img_number in nums:
@@ -443,11 +502,6 @@ for i in range(10):
     test_img_input=np.expand_dims(test_img, 0)
     prediction = (model.predict(test_img_input))
     predicted_img=np.argmax(prediction, axis=3)[0,:,:]
-
-    plist = torch.from_numpy(predicted_img)
-    predi.append(plist)
-    glist = torch.from_numpy(ground_truth)
-    truths.append(glist)
 
     plt.figure(figsize=(12, 8))
     plt.subplot(231)
